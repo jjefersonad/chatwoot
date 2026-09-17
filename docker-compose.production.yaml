@@ -24,10 +24,9 @@ services:
       - redis
     ports:
       - '127.0.0.1:3000:3000'
-    environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-      - INSTALLATION_ENV=docker
+    # NOTE: no `environment:` override here - it would REPLACE the base
+    # environment list (compose list merge is not deep), dropping
+    # SECRET_KEY_BASE/POSTGRES_*/REDIS_* in rails and sidekiq.
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
     restart: always
@@ -37,10 +36,6 @@ services:
     depends_on:
       - postgres
       - redis
-    environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-      - INSTALLATION_ENV=docker
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
     restart: always
 
